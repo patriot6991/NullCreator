@@ -19,9 +19,10 @@ class NullCreator(object):
 
         #get some
         name_list = mc.ls(sl=True)
+        parent_list = mc.listRelatives(parent=True)
+
         for i in range(9):
             attr_temp[i] = mc.getAttr('%s%s' %(name_list[0], attr_name[i]))
-            print attr_temp[i]
 
         #new name
         if self.j == 0:
@@ -32,6 +33,8 @@ class NullCreator(object):
         #create node
         mc.createNode('transform', n=node_name)
         mc.parent(name_list[0], node_name)
+        if parent_list is not None and any(parent_list):
+            mc.parent(node_name, parent_list[0])
 
         #setAttr
         for i in range(9):
