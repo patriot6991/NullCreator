@@ -6,8 +6,7 @@ class NullCreator(object):
         self.sf = '_null'
         self.nn = ''
 
-
-    def original(self, *args):
+    def original(*args):
         mc.text('t1', en=True, edit=True)
         mc.text('t2', en=True, edit=True)
         mc.text('t3', en=False, edit=True)
