@@ -5,14 +5,47 @@ class NullCreator(object):
         self.pf = ''
         self.sf = '_null'
         self.nn = ''
+        self.j = 0
 
-    def original(*args):
+    def create(self, *args):
+        attr_list = [0, 0, 0, 0, 0, 0, 1, 1, 1]
+        attr_temp = [0, 0, 0, 0, 0, 0, 1, 1, 1]
+        attr_name = ['.tx', '.ty', '.tz', '.rx', '.ry', '.rz', '.sx', '.sy', '.sz']
+
+        #set name
+        self.pf = str(mc.textField('f1', q=True, text=True))
+        self.sf = str(mc.textField('f2', q=True, text=True))
+        self.nn = str(mc.textField('f3', q=True, text=True))
+
+        #get some
+        name_list = mc.ls(sl=True)
+        for i in range(9):
+            attr_temp[i] = mc.getAttr('%s%s' %(name_list[0], attr_name[i]))
+            print attr_temp[i]
+
+        #new name
+        if self.j == 0:
+            node_name = '%s%s%s' % (self.pf, name_list[0], self.sf)
+        else:
+            node_name = self.nn
+
+        #create node
+        mc.createNode('transform', n=node_name)
+        mc.parent(name_list[0], node_name)
+
+        #setAttr
+        for i in range(9):
+            mc.setAttr('%s%s' %(name_list[0], attr_name[i]), attr_list[i])
+            mc.setAttr('%s%s' %(node_name, attr_name[i]), attr_temp[i])
+
+    def original(self, *args):
         mc.text('t1', en=True, edit=True)
         mc.text('t2', en=True, edit=True)
         mc.text('t3', en=False, edit=True)
         mc.textField('f1', en=True, edit=True)
         mc.textField('f2', en=True, edit=True)
         mc.textField('f3', en=False, edit=True)
+        self.j = 0
 
     def new(self, *args):
         mc.text('t1', en=False, edit=True)
@@ -21,6 +54,7 @@ class NullCreator(object):
         mc.textField('f1', en=False, edit=True)
         mc.textField('f2', en=False, edit=True)
         mc.textField('f3', en=True, edit=True)
+        self.j = 1
 
     def ui(self):
         win = mc.window(title='nullCreator', widthHeight=(300,170))
@@ -36,7 +70,7 @@ class NullCreator(object):
         f2 = mc.textField('f2', w=225, h=20, text=self.sf, en=True)
         f3 = mc.textField('f3', w=225, h=20, text=self.nn, en=False)
         sp = mc.separator(w=280)
-        b1 = mc.button(l='Create', w=280, h=40)
+        b1 = mc.button(l='Create', w=280, h=40, c=self.create)
 
         mc.formLayout(form, edit=True, attachForm=[
             (rb1,'top',10),(rb1,'left',30),
